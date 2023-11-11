@@ -2,7 +2,7 @@
     require_once '../../lib/utils.php';
 
     if(!isPost()){
-        raiseMethodNowAllowed();
+        raiseMethodNotAllowed();
     }
 
     $data = getJsonPost();

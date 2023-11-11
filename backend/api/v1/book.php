@@ -38,5 +38,5 @@
         raiseOK();
     }
 
-    raiseMethodNowAllowed();    
+    raiseMethodNotAllowed();    
 ?>

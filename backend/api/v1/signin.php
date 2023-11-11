@@ -2,7 +2,7 @@
     require_once '../../lib/utils.php';
 
     if(!isPost()){
-        raiseMethodNowAllowed();
+        raiseMethodNotAllowed();
     }
 
     $data = getJsonPost();
@@ -15,7 +15,7 @@
     $password = $data['password'];
 
     // check types
-    if(!is_string($username) || !is_string($username) || !is_string($password)){
+    if(!is_string($username) || !is_string($password)){
         raiseBadRequest();
     }
 

@@ -5,15 +5,18 @@
      * all the application
      */
 
-    // if server is in DEV mode, then return some CORS headers to
+    // if server is in DEV mode, on preflight requests return some CORS headers to
     // enable separate backend and frontend container
-
     if(getenv('DEV')){
-        header('Access-Control-Allow-Origin: http://localhost:8080');
+        header('Access-Control-Allow-Origin: http://localhost:5173');
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type, Authorization');
         header('Access-Control-Max-Age: 86400');
+
+        if(strcmp($_SERVER['REQUEST_METHOD'], 'OPTIONS') === 0){
+            die();
+        }
     }
 
     //This should be created in an offline folder
@@ -48,7 +51,7 @@
         die();
     }
 
-    function raiseMethodNowAllowed(){
+    function raiseMethodNotAllowed(){
         http_response_code(METHOD_NOT_ALLOWED);
         die();
     }

@@ -156,5 +156,5 @@
         raiseOK();
     }
 
-    raiseMethodNowAllowed();    
+    raiseMethodNotAllowed();    
 ?>
