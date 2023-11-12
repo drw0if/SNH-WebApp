@@ -5,6 +5,9 @@
      * all the application
      */
 
+    mb_internal_encoding('UTF-8');
+    mb_http_output('UTF-8');
+
     // if server is in DEV mode, on preflight requests return some CORS headers to
     // enable separate backend and frontend container
     if(getenv('DEV')){
@@ -179,8 +182,9 @@
 
     //returns a json and set a status code - default is 200
     function exitWithJson($obj, $code = 200){
+        header("Content-type: application/json; charset=utf-8");
         http_response_code($code);
-        echo json_encode($obj);
+        echo json_encode($obj, JSON_UNESCAPED_UNICODE);
         exit();
     }
 

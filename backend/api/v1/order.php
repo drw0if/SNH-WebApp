@@ -17,7 +17,7 @@
         $order = $ans[0];
 
         $query = <<<QUERY
-            SELECT `b`.`id`, `b`.`name`, `b`.`author`, `b`.`genre`, `b`.`picture`, `ob`.`quantity`
+            SELECT `b`.`id`, `b`.`name`, `b`.`author`, `b`.`genre`, `b`.`picture`, `b`.`description`, `ob`.`quantity`
             FROM `order_book` `ob`
             INNER JOIN `book` `b` ON `ob`.`book_id` = `b`.`id`
             WHERE `ob`.`order_id` = :order_id
@@ -36,6 +36,7 @@
                 'author' => $item['author'],
                 'genre' => $item['genre'],
                 'picture' => $item['picture'],
+                'description' => $item['description'],
                 'quantity' => $item['quantity']
             ];
         }
