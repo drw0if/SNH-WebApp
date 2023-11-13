@@ -1,7 +1,7 @@
 <script>
     import { page } from "$app/stores";
     import { onMount } from "svelte";
-    import { get_token, set_token } from "$lib/js/localstorage.js";
+    import { add_cart } from "$lib/js/localstorage.js";
     import { Toast, toast } from "$lib/components/Toast";
     import { Spinner } from "$lib/components/Spinner";
     import { get } from "$lib/js/api.js";
@@ -29,7 +29,8 @@
     });
 
     const add_to_cart = () => {
-        console.log("add to cart");
+        add_cart(book);
+        //document.location = "/book";
     };
 </script>
 
@@ -79,7 +80,7 @@
                 <div class="flex flex-row justify-end my-3 gap-3">
                     <span
                         class="text-3xl font-bold text-gray-900 dark:text-white"
-                        >${book.price}</span
+                        >${(book.price / 100).toFixed(2)}</span
                     >
                     <a
                         href="#"
