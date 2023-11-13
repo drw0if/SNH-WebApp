@@ -43,7 +43,7 @@
 
     // create session
     $token = bin2hex(random_bytes(32));
-    $db->exec('INSERT INTO `session` (`user_id`, `token`, `created_at`) VALUES (:user_id, :token, NOW())', [
+    $db->exec('INSERT INTO `session` (`user_id`, `token`) VALUES (:user_id, :token)', [
         'user_id' => $user['id'],
         'token' => $token
     ]);

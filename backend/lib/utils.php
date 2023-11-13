@@ -154,8 +154,7 @@
             if(!is_array($item) || !isset($item['book_id']) || !isset($item['quantity'])){
                 return false;
             }
-
-            if(!isNumber($item['book_id']) || !isNumber($item['quantity']) || $item['quantity'] < 1){
+            if(!is_numeric($item['book_id']) || !is_numeric($item['quantity']) || $item['quantity'] < 1){
                 return false;
             }
         }
