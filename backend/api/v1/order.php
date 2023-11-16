@@ -77,16 +77,14 @@
             $ans = [];
         }
 
-        exitWithJson([
-            'orders' => $ans
-        ]);
+        exitWithJson($ans);
     }
 
     function orderPost(){
         $user = getLoggedUser();
         $data = getJsonPost();
     
-        if(!isset($data['cart']) || !isset($data['credit_card_number']) || !isset($data['credit_card_expiration_date']) || !isset($data['credit_card_cvv'])){
+        if(!isset($data['cart']) || !isset($data['credit_card_number']) || !isset($data['credit_card_expiration_date']) || !isset($data['credit_card_cvv']) || !isset($data['shipping_address']) || !isset($data['shipping_city']) || !isset($data['shipping_state'])){
             raiseBadRequest();
         }
     
@@ -94,9 +92,12 @@
         $credit_card_number = $data['credit_card_number'];
         $credit_card_expiration_date = $data['credit_card_expiration_date'];
         $credit_card_cvv = $data['credit_card_cvv'];
-    
+        $shipping_address = $data['shipping_address'];
+        $shipping_city = $data['shipping_city'];
+        $shipping_state = $data['shipping_state'];
+
         // check types
-        if(!checkCreditCardNumber($credit_card_number) || !checkCreditCardExpirationDate($credit_card_expiration_date) || !checkCreditCardCVV($credit_card_cvv) || !checkCart($cart)){
+        if(!checkCreditCardNumber($credit_card_number) || !checkCreditCardExpirationDate($credit_card_expiration_date) || !checkCreditCardCVV($credit_card_cvv) || !checkCart($cart) || !is_string($shipping_address) || !is_string($shipping_city) || !is_string($shipping_state)){
             raiseBadRequest();
         }
     
@@ -128,9 +129,12 @@
         }
     
         // add order to db
-        $ans = $db->exec('INSERT INTO `order` (`user_id`, `total`) VALUES (:user_id, :total)', [
+        $ans = $db->exec('INSERT INTO `order` (`user_id`, `total`, `shipping_address`, `shipping_city`, `shipping_state`) VALUES (:user_id, :total, :shipping_address, :shipping_city, :shipping_state)', [
             'user_id' => $user['id'],
-            'total' => $total
+            'total' => $total,
+            'shipping_address' => $shipping_address,
+            'shipping_city' => $shipping_city,
+            'shipping_state' => $shipping_state
         ]);
     
         $order_id = $db->lastInsertId();

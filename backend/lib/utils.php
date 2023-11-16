@@ -23,7 +23,7 @@
     }
 
     //This should be created in an offline folder
-    define('STORAGE', __DIR__ . '/../upload/');
+    define('STORAGE',  '/var/www/ebooks/');
     define('OK', 200);
     define('BAD_REQUEST', 400);
     define('UNAUTHORIZED', 401);
@@ -193,28 +193,28 @@
     }
 
     //Common procedure to serve file via HTTP
-    function serveFile($book){
+    function serveFile($path, $filename){
         //Open the file and suppress warnings
-        $fp = @fopen(STORAGE . $book->local_name, 'r');
+        $fp = @fopen($path, 'r');
 
         //Check if fopen worked
         if($fp === FALSE){
-            http_response_code(404);
-            exit();
+            raiseNotFound();
         }
 
         //Set content type to serve the file
-        header('Content-Type: ' . $GLOBALS['contentTypes'][$book->file_type]);
-        header('Content-Disposition: attachment; filename="' . $book->name . $book->file_type . '"');
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
 
         //Send the file content
         fpassthru($fp);
         fclose($fp);
+        exit();
     }
 
     // Get POST data from json and check content-type
     function getJsonPost(){
-        if(strcmp($_SERVER['CONTENT_TYPE'], 'application/json') !== 0){
+        if(strcasecmp($_SERVER['CONTENT_TYPE'], 'application/json') !== 0){
             exitWithJson([
                 'error' => 'Invalid content-type'
             ], BAD_REQUEST);
