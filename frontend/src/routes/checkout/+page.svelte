@@ -1,5 +1,5 @@
 <script>
-    import { get_token, get_cart } from "$lib/js/localstorage.js";
+    import { get_token, get_cart, empty_cart } from "$lib/js/localstorage.js";
     import { Toast, toast } from "$lib/components/Toast";
     import { post } from "$lib/js/api.js";
     import { validate_field } from "$lib/js/validation.js";
@@ -108,22 +108,22 @@
                 {
                     credit_card_number: credit_card_number.replaceAll(" ", ""),
                     credit_card_expiration_date: credit_card_expiration,
-                    credit_card_cvv: credit_card_cvv,
-                    cart: cart,
+                    credit_card_cvv,
+                    cart,
+                    shipping_address,
+                    shipping_city,
+                    shipping_state,
                 },
                 true
             );
 
-            const res = await req.json();
-            /*
-
             if (req.status === 200) {
-                const token = res.token;
-                set_token(token);
-                document.location = "/book";
+                empty_cart();
+                document.location = "/bookshelf";
             } else {
+                const res = await req.json();
                 toast.set({ message: res.error });
-            }*/
+            }
         }
     };
 </script>

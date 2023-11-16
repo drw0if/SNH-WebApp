@@ -1,5 +1,5 @@
 import { get_token } from './localstorage.js';
-const apiURL = 'http://localhost:3000/api/v1';
+const apiURL = window.origin + '/api/v1';
 
 const get = async (url, authenticated) => {
     let headers = {};
