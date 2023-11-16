@@ -55,6 +55,9 @@ CREATE TABLE `order`(
     `id` INT NOT NULL AUTO_INCREMENT,
     `user_id` INT NOT NULL,
     `total` INTEGER NOT NULL,
+    `shipping_address` VARCHAR(500),
+    `shipping_city` VARCHAR(200),
+    `shipping_state` VARCHAR(200),
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (`id`),
