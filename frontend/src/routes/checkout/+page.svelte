@@ -8,6 +8,17 @@
 
     let stage = 1;
 
+    let carrellazzo = get_cart();
+
+    $: total =
+        $carrellazzo
+            .map((x) => {
+                return x.price * x.quantity;
+            })
+            .reduce((x, y) => {
+                return x + y;
+            }, 0) / 100;
+
     let credit_card_number;
     let credit_card_number_input;
     let credit_card_number_error_box;
@@ -46,7 +57,7 @@
                     return regex.test(x);
                 },
                 credit_card_number_input,
-                credit_card_number_error_box
+                credit_card_number_error_box,
             );
 
             validate_field(
@@ -55,7 +66,7 @@
                     return regex.test(x);
                 },
                 credit_card_expiration_input,
-                credit_card_expiration_error_box
+                credit_card_expiration_error_box,
             );
 
             validate_field(
@@ -64,7 +75,7 @@
                     return regex.test(x);
                 },
                 credit_card_cvv_input,
-                credit_card_cvv_error_box
+                credit_card_cvv_error_box,
             );
 
             stage = 2;
@@ -75,25 +86,26 @@
                     return x.length > 0;
                 },
                 shipping_address_input,
-                shipping_address_error_box
+                shipping_address_error_box,
             );
             validate_field(
                 (x) => {
                     return x.length > 0;
                 },
                 shipping_city_input,
-                shipping_city_error_box
+                shipping_city_error_box,
             );
             validate_field(
                 (x) => {
                     return x.length > 0;
                 },
                 shipping_state_input,
-                shipping_state_error_box
+                shipping_state_error_box,
             );
 
             stage = 3;
         } else {
+            stage = 0;
             let cart = get(get_cart());
 
             cart = cart.map((x) => {
@@ -114,7 +126,7 @@
                     shipping_city,
                     shipping_state,
                 },
-                true
+                true,
             );
 
             if (req.status === 200) {
@@ -136,6 +148,61 @@
 <div
     class="flex flex-col items-center justify-center px-6 py-8 mx-auto my-auto lg:py-0"
 >
+    <ol
+        class="items-center w-full space-y-4 sm:flex sm:space-x-8 sm:space-y-0 rtl:space-x-reverse mb-10"
+    >
+        <li>
+            <button
+                on:click={() => (stage = 1)}
+                disabled={stage < 1}
+                class="flex items-center text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse"
+            >
+                <span
+                    class="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500"
+                >
+                    1
+                </span>
+                <span>
+                    <h3 class="font-medium leading-tight">Credit card Info</h3>
+                    <p class="text-sm">Fill in the card data</p>
+                </span>
+            </button>
+        </li>
+        <li>
+            <button
+                on:click={() => (stage = 2)}
+                class="flex items-center text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse disabled:opacity-20"
+                disabled={stage < 2}
+            >
+                <span
+                    class="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400"
+                >
+                    2
+                </span>
+                <span>
+                    <h3 class="font-medium leading-tight">Shipping info</h3>
+                    <p class="text-sm">Where will the books be?</p>
+                </span>
+            </button>
+        </li>
+        <li>
+            <button
+                class="flex items-center text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse disabled:opacity-20"
+                disabled={stage < 3}
+            >
+                <span
+                    class="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400"
+                >
+                    3
+                </span>
+                <span>
+                    <h3 class="font-medium leading-tight">Checkout</h3>
+                    <p class="text-sm">Buy right now!</p>
+                </span>
+            </button>
+        </li>
+    </ol>
+
     <div
         class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
     >
@@ -297,6 +364,15 @@
                         </p>
                     </div>
                 {:else if stage == 3}
+                    <div class="bg-gray-200 rounded-lg m-1 p-4">
+                        {#each $carrellazzo as book}
+                            {book.name} | ${(book.price / 100).toFixed(2)} x {book.quantity}
+                            <br />
+                        {/each}
+                        <br />
+                        Total:
+                        <span class="font-bold">${total.toFixed(2)}</span>
+                    </div>
                     <button
                         class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 flex flex-col justify-center items-center button"
                         on:click|preventDefault={fire_form}
