@@ -6,6 +6,15 @@ services:
     ports:
       - "3000:8080"
     privileged: false
+    environment:
+      - GMAIL_EMAIL=${GMAIL_EMAIL}
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+      - GMAIL_CLIENT_ID=${GMAIL_CLIENT_ID}
+      - GMAIL_PROJECT_ID=${GMAIL_PROJECT_ID}
+      - GMAIL_AUTH_URI=${GMAIL_AUTH_URI}
+      - GMAIL_TOKEN_URI=${GMAIL_TOKEN_URI}
+      - GMAIL_AUTH_PROVIDER_X509_CERT_URL=${GMAIL_AUTH_PROVIDER_X509_CERT_URL}
+      - GMAIL_CLIENT_SECRET=${GMAIL_CLIENT_SECRET}
   
   db:
     build: db
