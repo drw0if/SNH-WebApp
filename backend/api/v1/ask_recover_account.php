@@ -34,11 +34,16 @@
     $user = $ans[0];
 
     // create token
-    //$token = bin2hex(random_bytes(32));
+    $token = bin2hex(random_bytes(32));
 
-    // to simulate the token sent via email
-    // let's hardcode it
-    $token = '1234567890';
+    // send code via email
+    $ans = send_mail($email, 'Recover account', "The token to recover your account is: {$token}" );
+
+    if (!$ans) {
+        exitWithJson([
+            'error' => "couldn't send email, please try again later",
+        ], INTERNAL_SERVER_ERROR);
+    }
 
     $ans = $db->exec('INSERT INTO `user_recover` (`user_id`, `token`) VALUES (:user_id, :token)', [
         'user_id' => $user['id'],
