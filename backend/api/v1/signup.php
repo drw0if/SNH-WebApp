@@ -47,6 +47,22 @@
         raiseOK();
     }
 
+    // Before adding stuff to the DB let's try to send the verification email
+    $token = bin2hex(random_bytes(32));
+    $DEPLOYED_DOMAIN = getenv('DEPLOYED_DOMAIN');
+
+    $ans = send_mail($email,
+        'Verify your account',
+        "Click <a href=\"{$DEPLOYED_DOMAIN}/api/v1/verify.php?token={$token}\">here</a> in order to verify your account!",
+        'text/html'
+    );
+    
+    if (!$ans) {
+        exitWithJson([
+            'error' => "couldn't send verification email",
+        ], INTERNAL_SERVER_ERROR);
+    }
+
     // add user to db
     $db->exec('INSERT INTO `user` (`email`, `username`, `password`) VALUES (:email, :username, :password)', [
         'email' => $email,
@@ -57,23 +73,9 @@
     $user_id = $db->lastInsertId();
 
     // add verification token to db
-    $token = bin2hex(random_bytes(32));
     $db->exec('INSERT INTO `user_verification` (`user_id`, `token`) VALUES (:user_id, :token)', [
         'user_id' => $user_id,
         'token' => $token
-    ]);
-
-    // should send an email with the token, but for PoC
-    // purpose, let's just automatically verify the user
-
-    // set user as verified
-    $db->exec('UPDATE `user` SET `verified` = 1 WHERE `id` = :user_id', [
-        'user_id' => $user_id
-    ]);
-
-    // delete token from db
-    $db->exec('DELETE FROM `user_verification` WHERE `user_id` = :user_id', [
-        'user_id' => $user_id
     ]);
 
     raiseOK();

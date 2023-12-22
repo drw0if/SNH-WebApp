@@ -41,6 +41,13 @@
         ], UNAUTHORIZED);
     }
 
+    // Check if user is verified
+    if($user['verified'] === 0){
+        exitWithJson([
+            'error' => "user is not verified, please check your email first",
+        ], UNAUTHORIZED);
+    }
+
     // create session
     $token = bin2hex(random_bytes(32));
     $db->exec('INSERT INTO `session` (`user_id`, `token`) VALUES (:user_id, :token)', [
