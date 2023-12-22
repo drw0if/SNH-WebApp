@@ -32,6 +32,7 @@
     define('UNAUTHORIZED', 401);
     define('METHOD_NOT_ALLOWED', 405);
     define('NOT_FOUND', 404);
+    define('INTERNAL_SERVER_ERROR', 500);
 
     //Exit if the page is requested directly instead of import
     function exitIfRequested($callingFile){
