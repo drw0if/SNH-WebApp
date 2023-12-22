@@ -9,16 +9,11 @@ services:
     environment:
       - DEV=1
       - GMAIL_EMAIL=${GMAIL_EMAIL}
-      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
-      - GMAIL_CLIENT_ID=${GMAIL_CLIENT_ID}
-      - GMAIL_PROJECT_ID=${GMAIL_PROJECT_ID}
-      - GMAIL_AUTH_URI=${GMAIL_AUTH_URI}
-      - GMAIL_TOKEN_URI=${GMAIL_TOKEN_URI}
-      - GMAIL_AUTH_PROVIDER_X509_CERT_URL=${GMAIL_AUTH_PROVIDER_X509_CERT_URL}
-      - GMAIL_CLIENT_SECRET=${GMAIL_CLIENT_SECRET}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - DEPLOYED_DOMAIN=${DEPLOYED_DOMAIN}
     volumes:
-      - ./backend:/var/www/html
-      - ./ebooks:/var/www/ebooks
+      - ./backend:/var/www/html/public
+      - ./ebooks:/var/www/html/ebooks
 
   # frontend:
     # build: frontend

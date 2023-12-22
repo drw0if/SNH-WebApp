@@ -5,6 +5,9 @@
      * all the application
      */
 
+    require_once __DIR__ . '/../../vendor/autoload.php';
+    use SendGrid\Mail\Mail;
+
     mb_internal_encoding('UTF-8');
     mb_http_output('UTF-8');
 
@@ -229,6 +232,36 @@
         }
 
         return $post;
+    }
+
+    function send_mail($to, $object, $content, $content_type="text/plain"){
+        $SENDGRID_API_KEY = getenv('SENDGRID_API_KEY');
+        $GMAIL_EMAIL = getenv('GMAIL_EMAIL');
+
+        if(!$SENDGRID_API_KEY){
+            error_log('Missing SENDGRID_API_KEY env variable');
+            return false;
+        }
+    
+        if(!$GMAIL_EMAIL){
+            error_log('Missing GMAIL_EMAIL env variable');
+            return false;
+        }
+
+        $email = new Mail();
+        $email->setFrom($GMAIL_EMAIL, "SNH Project");
+        $email->setSubject($object);
+        $email->addTo($to);
+        $email->addContent($content_type, $content);
+        $sendgrid = new \SendGrid($SENDGRID_API_KEY);
+        try {
+            $sendgrid->send($email);
+        } catch (Exception $e) {
+            error_log("Sendgrid error: {$e->getMessage()}");
+            return false;
+        }
+
+        return true;
     }
 
 ?>
