@@ -43,5 +43,6 @@
         'user_id' => $user_id
     ]);
 
+    header("Location: /");
     raiseOK();
 ?>
