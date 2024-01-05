@@ -13,7 +13,7 @@ services:
       - DEPLOYED_DOMAIN=${DEPLOYED_DOMAIN}
     volumes:
       - ./backend:/var/www/html/public
-      - ./ebooks:/var/www/html/ebooks
+      - ./ebooks:/var/www/ebooks
 
   # frontend:
     # build: frontend

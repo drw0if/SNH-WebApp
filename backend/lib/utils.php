@@ -73,18 +73,16 @@
         die();
     }
 
-    //Check if user is logged, REMEMBER TO START THE SESSION
+    //Check if user is logged
     function getLoggedUser(){
         // get authorization header
-        if(!isset($_SERVER['HTTP_AUTHORIZATION'])){
-            error_log("Missing authorization header");
-            raiseUnauthorized();
+        if(!isset($_COOKIE['session'])){
+            return null;
         }
-        $auth = $_SERVER['HTTP_AUTHORIZATION'];
+        $auth = $_COOKIE['session'];
 
         if(!is_string($auth)){
-            error_log("Authorization header is not a string");
-            raiseUnauthorized();
+            return null;
         }
 
         // check for token in db
@@ -96,8 +94,7 @@
         ]);
 
         if(count($ans) === 0){
-            error_log("No session with the token: {$auth}");
-            raiseUnauthorized();
+            return false;
         }
 
         $session = $ans[0];
@@ -108,11 +105,18 @@
         ]);
 
         if(count($user) === 0){
-            error_log("Session found with no user attached: {$session['token']} - {$session['user_id']}");
-            raiseUnauthorized();
+            return false;
         }
 
+        // Done here in order to update cookies before rendering stuff
+        get_csrf_token();
+
         return $user[0];
+    }
+
+    function redirect_authenticated(){
+        header("Location: /bookshelf.php");
+        die();
     }
 
     function checkPassword($password){
@@ -263,6 +267,26 @@
         }
 
         return true;
+    }
+
+    function get_csrf_token(){
+        if(!isset($_COOKIE['csrf_token'])){
+            return set_csrf_token();
+        }
+        return $_COOKIE['csrf_token'];
+    }
+
+    function set_csrf_token(){
+        $csrf_token = bin2hex(random_bytes(32));
+        setcookie("csrf_token", $csrf_token, time() + 30 * 24 * 60 * 60, "/", "", true, true);
+        return $csrf_token;
+    }
+
+    function check_csrf($csrf_token) {
+        if(!isset($_COOKIE['csrf_token'])){
+            return false;
+        }
+        return $_COOKIE['csrf_token'] === $csrf_token;
     }
 
 ?>

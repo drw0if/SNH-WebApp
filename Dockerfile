@@ -1,15 +1,3 @@
-# build frontend
-FROM node@sha256:7ce8b205d15e30fd395e5fa4000bcdf595fcff3f434fe75822e54e82a5f5cf82 as build-frontend
-
-WORKDIR /app
-
-COPY ./frontend/package.json ./
-COPY ./frontend/package-lock.json ./
-RUN npm install
-
-COPY ./frontend/ ./
-RUN npm run build
-
 # Deploy everything
 FROM trafex/php-nginx@sha256:6d56d20a4752470beff6841f96293e2923ae2cb82617d1c449f6d6ef32f1c234
 
@@ -30,6 +18,3 @@ RUN composer require sendgrid/sendgrid
 
 COPY ./ebooks ./ebooks
 COPY ./backend ./public
-
-# move frontend in /usr/share/nginx/html
-COPY --from=build-frontend /app/build ./public
