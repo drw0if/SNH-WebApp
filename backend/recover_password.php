@@ -116,10 +116,31 @@ function recover_account()
         'id' => $user_recover['id']
     ]);
 
-    if(strtotime($user_recover['valid_until']) < time()) {
+    if (strtotime($user_recover['valid_until']) < time()) {
         security_log("Attempt of recovering password with expired token ({$token})");
         return [
             "error" => "Token is expired"
+        ];
+    }
+
+    $ans = $db->exec('SELECT email FROM `user` WHERE `user_id` = :user_id', [
+        'user_id' => $user_recover['user_id']
+    ]);
+
+
+    if (count($ans) === 0) {
+        security_log("Attempt of recovering password for non existing user ({$user_recover['user_id']})");
+        return [
+            "error" => "Invalid token"
+        ];
+    }
+    $user = $ans[0];
+
+    $ans = send_mail($user['email'], "Password changed", "Your password has been changed successfully. If you didn't do this, please contact us.");
+
+    if (!$ans) {
+        return [
+            "error" => "Couldn't send email, please try again later",
         ];
     }
 
@@ -170,7 +191,7 @@ require_once "template/header.php"; ?>
                             <?php echo $out["msg"]; ?>
                         </p>
                     <?php } else if (isset($out["error"])) { ?>
-                        <p class="mt-2 text-sm text-red-600 ext-red-500" id="username_error_box">
+                        <p class="mt-2 text-sm text-red-600 ext-red-500" id="error_msg">
                             <?php echo $out["error"]; ?>
                         </p>
                     <?php } ?>
@@ -188,7 +209,7 @@ require_once "template/header.php"; ?>
                             <?php echo $out["msg"]; ?>
                         </p>
                     <?php } else if (isset($out["error"])) { ?>
-                        <p class="mt-2 text-sm text-red-600 ext-red-500" id="username_error_box">
+                        <p class="mt-2 text-sm text-red-600 ext-red-500" id="error_msg">
                             <?php echo $out["error"]; ?>
                         </p>
                     <?php } ?>

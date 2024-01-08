@@ -123,7 +123,7 @@ require_once "template/header.php"; ?>
                 </div>
 
                 <?php if (isset($error_msg)) { ?>
-                    <p class="mt-2 text-sm text-red-600 ext-red-500" id="username_error_box">
+                    <p class="mt-2 text-sm text-red-600 ext-red-500" id="error_msg">
                         <?php echo $error_msg; ?>
                     </p>
                 <?php } ?>

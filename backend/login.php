@@ -81,9 +81,6 @@ require_once "template/header.php"; ?>
                 <div>
                     <label for="username" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Your username</label>
                     <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="username" required="" />
-                    <p class="mt-2 text-sm text-red-600 ext-red-500 hidden" id="username_error_box">
-                        Invalid username format
-                    </p>
                 </div>
                 <div>
                     <label for="password" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Password</label>
@@ -91,7 +88,7 @@ require_once "template/header.php"; ?>
                 </div>
 
                 <?php if (isset($error_msg)) { ?>
-                    <p class="mt-2 text-sm text-red-600 ext-red-500" id="username_error_box">
+                    <p class="mt-2 text-sm text-red-600 ext-red-500" id="error_msg">
                         <?php echo $error_msg; ?>
                     </p>
                 <?php } ?>
