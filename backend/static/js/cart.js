@@ -86,10 +86,14 @@ const cart = {
         cart_size.innerText = elements;
         cart_total.innerText = "$" + total;
 
-        if (elements == 0)
+        if (elements == 0) {
+            cart_size.classList.add("hidden")
             checkout_button.setAttribute("disabled", "");
-        else
+        }
+        else {
+            cart_size.classList.remove("hidden")
             checkout_button.removeAttribute("disabled", "");
+        }
 
         cart_list.innerHTML = "";
         cart.content.forEach((book) => {
