@@ -98,8 +98,10 @@ function orderPost($user)
         ]);
     }
 
-    header("Location: /orders.php");
-    die();
+    return [
+        "msg" => "Checkout completed!",
+    ];
+    
 }
 
 if (isPost()) {
