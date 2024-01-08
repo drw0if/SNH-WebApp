@@ -98,9 +98,8 @@ function orderPost($user)
         ]);
     }
 
-    return [
-        "msg" => "Checkout completed!",
-    ];
+    header("Location: /bookshelf.php");
+    die();
 }
 
 if (isPost()) {
