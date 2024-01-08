@@ -40,8 +40,8 @@
                 $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             }
             catch(PDOException $e){
-                //If db connection error occurs return 500 status code (Server error)
-                exitWithJson(['error' => 'Error connecting with the database'], 500);
+                security_log('DB connection error: ' . $e->getMessage());
+                raiseBadRequest();
             }
         }
 
