@@ -188,14 +188,6 @@
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
 
-    //returns a json and set a status code - default is 200
-    function exitWithJson($obj, $code = 200){
-        header("Content-type: application/json; charset=utf-8");
-        http_response_code($code);
-        echo json_encode($obj, JSON_UNESCAPED_UNICODE);
-        exit();
-    }
-
     //Check if a string is an integer number
     function isNumber($str){
         return is_string($str) && preg_match("/^-?\d{1,}$/", $str);
@@ -219,25 +211,6 @@
         fpassthru($fp);
         fclose($fp);
         exit();
-    }
-
-    // Get POST data from json and check content-type
-    function getJsonPost(){
-        if(strcasecmp($_SERVER['CONTENT_TYPE'], 'application/json') !== 0){
-            exitWithJson([
-                'error' => 'Invalid content-type'
-            ], BAD_REQUEST);
-        }
-
-        $post = json_decode(file_get_contents('php://input'), true);
-
-        if($post === null){
-            exitWithJson([
-                'error' => 'Invalid json'
-            ], BAD_REQUEST);
-        }
-
-        return $post;
     }
 
     function send_mail($to, $object, $content, $content_type="text/plain"){

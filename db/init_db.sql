@@ -23,6 +23,7 @@ CREATE TABLE `user_recover`(
     `id` INT NOT NULL AUTO_INCREMENT,
     `user_id` INT NOT NULL,
     `token` CHAR(64) NOT NULL,
+    `valid_until` DATETIME NOT NULL,
 
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)

@@ -8,17 +8,8 @@ if ($user != null) {
 
 function ask_recover_account()
 {
-    $data = [
-        "email" => $_POST["email"],
-    ];
-
-    if (!isset($data['email'])) {
-        return [
-            "error" => "Invalid email",
-        ];
-    }
-
-    $email = $data['email'];
+    // If we are here, we are sure of having the email set
+    $email = $_POST['email'];
 
     // check types
     if (!is_string($email)) {
@@ -36,6 +27,7 @@ function ask_recover_account()
     ]);
 
     if (count($ans) === 0) {
+        security_log("Attempt of recovering password for non existing user ({$email})");
         return [
             "msg" => "Check your email for the password recovery link",
         ];
@@ -61,7 +53,7 @@ function ask_recover_account()
         ];
     }
 
-    $ans = $db->exec('INSERT INTO `user_recover` (`user_id`, `token`) VALUES (:user_id, :token)', [
+    $ans = $db->exec('INSERT INTO `user_recover` (`user_id`, `token`, `valid_until`) VALUES (:user_id, :token, DATE_ADD(NOW(), INTERVAL 24 HOUR))', [
         'user_id' => $user['id'],
         'token' => $token
     ]);
@@ -73,22 +65,15 @@ function ask_recover_account()
 
 function recover_account()
 {
-    $data = [
-        "token" => $_POST["token"],
-        "password" => $_POST["password"],
-        "confirm_password" => $_POST["confirm_password"],
-    ];
-
-    if (!isset($data['token']) || !isset($data['password']) || !isset($data['confirm_password'])) {
+    if (!isset($_POST['token']) || !isset($_POST['password']) || !isset($_POST['confirm_password'])) {
         return [
             "error" => "Invalid token or password"
         ];
     }
 
-    $token = $data['token'];
-    $new_password = $data['password'];
-    $confirm_password = $data['confirm_password'];
-
+    $token = $_POST['token'];
+    $new_password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
 
     // check types
     if (!is_string($token) || !is_string($new_password) || !is_string($confirm_password)) {
@@ -97,9 +82,15 @@ function recover_account()
         ];
     }
 
+    if (!checkPassword($new_password)) {
+        return [
+            "error" => "Password doesn't meet requirements: at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 symbol"
+        ];
+    }
+
     if ($new_password !== $confirm_password) {
         return [
-            "error" => "Passwords don't match"
+            "error" => "Password mismatch"
         ];
     }
 
@@ -112,6 +103,7 @@ function recover_account()
     ]);
 
     if (count($ans) === 0) {
+        security_log("Attempt of recovering password with invalid token ({$token})");
         return [
             "error" => "Invalid token"
         ];
@@ -124,6 +116,13 @@ function recover_account()
         'id' => $user_recover['id']
     ]);
 
+    if(strtotime($user_recover['valid_until']) < time()) {
+        security_log("Attempt of recovering password with expired token ({$token})");
+        return [
+            "error" => "Token is expired"
+        ];
+    }
+
     // update password
     $db->exec('UPDATE `user` SET `password` = :password WHERE `id` = :id', [
         'password' => password_hash($new_password, PASSWORD_DEFAULT),
@@ -135,17 +134,8 @@ function recover_account()
 }
 
 if (isPost()) {
-    if (isset($_POST["email"])) {
-        $out = ask_recover_account();
-    } else {
-        $out = recover_account();
-    }
-
-    $msg = $out["msg"];
-    $error_msg = $out["error"];
+    $out = (isset($_POST["email"])) ? ask_recover_account() : recover_account();
 }
-
-// TODO: show error message
 
 $description = "just b00k password recover page";
 $title = "Recover account";
@@ -168,33 +158,41 @@ require_once "template/header.php"; ?>
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Password</label>
                         <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" required="" />
-                        <p class="mt-2 text-sm text-red-600 ext-red-500 hidden" id="password_error_box">
-                            Invalid password format: at least an uppercase, a
-                            lowercase, a number and a symbol
-                        </p>
                     </div>
                     <div>
                         <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Confirm password</label>
                         <input type="password" name="confirm_password" id="confirm_password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" required="" />
-                        <p class="mt-2 text-sm text-red-600 ext-red-500 hidden" id="password_confirm_error_box">
-                            Password mismatch
-                        </p>
                     </div>
                     <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center g-blue-600 over:bg-blue-700 ocus:ring-blue-800">Recover</button>
-                <?php } else if (isset($msg)) { ?>
-                    <p class="mt-2 text-sm" id="msg">
-                        <?php echo $msg; ?>
-                    </p>
+
+                    <?php if (isset($out["msg"])) { ?>
+                        <p class="mt-2 text-sm text-green-600" id="msg">
+                            <?php echo $out["msg"]; ?>
+                        </p>
+                    <?php } else if (isset($out["error"])) { ?>
+                        <p class="mt-2 text-sm text-red-600 ext-red-500" id="username_error_box">
+                            <?php echo $out["error"]; ?>
+                        </p>
+                    <?php } ?>
+
                 <?php } else { ?>
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Your email</label>
                         <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="name@company.com" required="" />
-                        <p class="mt-2 text-sm text-red-600 ext-red-500 hidden" id="email_error_box">
-                            Invalid email format
-                        </p>
                     </div>
 
                     <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center g-blue-600 over:bg-blue-700 ocus:ring-blue-800">Recover</button>
+
+                    <?php if (isset($out["msg"])) { ?>
+                        <p class="mt-2 text-sm text-green-600" id="msg">
+                            <?php echo $out["msg"]; ?>
+                        </p>
+                    <?php } else if (isset($out["error"])) { ?>
+                        <p class="mt-2 text-sm text-red-600 ext-red-500" id="username_error_box">
+                            <?php echo $out["error"]; ?>
+                        </p>
+                    <?php } ?>
+
                 <?php } ?>
             </form>
         </div>
