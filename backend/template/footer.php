@@ -4,10 +4,7 @@
         </span>
         <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 ext-gray-400 sm:mt-0">
             <li>
-                <a href="/about.php" class="hover:underline me-4 md:me-6">About</a>
-            </li>
-            <li>
-                <a href="https://github.com/drw0if/SNH-WebApp" class="hover:underline me-4 md:me-6">Source</a>
+                <a href="/static/Specifications.pdf" class="hover:underline me-4 md:me-6">About</a>
             </li>
         </ul>
     </div>
