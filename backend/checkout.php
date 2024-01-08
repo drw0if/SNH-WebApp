@@ -10,29 +10,19 @@ function orderPost()
 {
     $user = getLoggedUser();
 
-    $data = [
-        "cart" => $_POST["cart"],
-        "credit_card_number" => $_POST["credit_card_number"],
-        "credit_card_expiration_date" => $_POST["credit_card_expiration_date"],
-        "credit_card_cvv" => $_POST["credit_card_cvv"],
-        "shipping_address" => $_POST["shipping_address"],
-        "shipping_city" => $_POST["shipping_city"],
-        "shipping_state" => $_POST["shipping_state"]
-    ];
-
-    if (!isset($data['cart']) || !isset($data['credit_card_number']) || !isset($data['credit_card_expiration_date']) || !isset($data['credit_card_cvv']) || !isset($data['shipping_address']) || !isset($data['shipping_city']) || !isset($data['shipping_state'])) {
+    if (!isset($_POST['cart']) || !isset($_POST['credit_card_number']) || !isset($_POST['credit_card_expiration_date']) || !isset($_POST['credit_card_cvv']) || !isset($_POST['shipping_address']) || !isset($_POST['shipping_city']) || !isset($_POST['shipping_state'])) {
         return [
             "error" => "Invalid data",
         ];
     }
 
-    $cart = $data['cart'];
-    $credit_card_number = $data['credit_card_number'];
-    $credit_card_expiration_date = $data['credit_card_expiration_date'];
-    $credit_card_cvv = $data['credit_card_cvv'];
-    $shipping_address = $data['shipping_address'];
-    $shipping_city = $data['shipping_city'];
-    $shipping_state = $data['shipping_state'];
+    $cart = $_POST['cart'];
+    $credit_card_number = $_POST['credit_card_number'];
+    $credit_card_expiration_date = $_POST['credit_card_expiration_date'];
+    $credit_card_cvv = $_POST['credit_card_cvv'];
+    $shipping_address = $_POST['shipping_address'];
+    $shipping_city = $_POST['shipping_city'];
+    $shipping_state = $_POST['shipping_state'];
 
     // check types
     if (!checkCreditCardNumber($credit_card_number)) {
@@ -68,9 +58,9 @@ function orderPost()
         ]);
 
         if (count($ans) === 0) {
-            exitWithJson([
-                'error' => 'Invalid book in cart!'
-            ], BAD_REQUEST);
+            return [
+                "error" => "Invalid cart!",
+            ];
         }
 
         $book = $ans[0];
