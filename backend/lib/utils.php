@@ -26,7 +26,7 @@
     }
 
     //This should be created in an offline folder
-    define('STORAGE',  '/var/www/ebooks/');
+    define('STORAGE',  '/var/www/html/ebooks/');
     define('OK', 200);
     define('BAD_REQUEST', 400);
     define('UNAUTHORIZED', 401);
