@@ -124,8 +124,14 @@
                                                 Shipping and taxes calculated at checkout.
                                             </p>
                                             <div class="mt-6">
-                                                <a href="<?php echo ($user === null ? "/login.php" : "/checkout.php") ?>" class="rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm w-full hover:bg-blue-700 disabled:cursor-not-allowed disabled:hover:none
-                                        disabled:opacity-10" id="checkout_button">Checkout</a>
+                                                <button onclick="redirectTo()" class="rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm w-full hover:bg-blue-700 disabled:cursor-not-allowed disabled:hover:none
+                                        disabled:opacity-10" id="checkout_button">Checkout</button>
+                                        <script>
+                                            var to_redirect = "<?php echo ($user === null ? "/login.php" : "/checkout.php") ?>"
+                                            const redirectTo = () => {
+                                                window.location.href = to_redirect
+                                            }
+                                        </script>
                                             </div>
                                         </div>
                                     </div>

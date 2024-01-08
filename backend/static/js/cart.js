@@ -82,9 +82,14 @@ const cart = {
         cart.content = x;
         const total = (cart.content.map(x => x.quantity * x.price).reduce((a, b) => a + b, 0) / 100).toFixed(2)
 
-        cart_size.innerText = cart.content.map(x => x.quantity).reduce((a, b) => a + b, 0);
+        const elements = cart.content.map(x => x.quantity).reduce((a, b) => a + b, 0);
+        cart_size.innerText = elements;
         cart_total.innerText = "$" + total;
-        checkout_button.disabled = cart.content.length === 0;
+
+        if (elements == 0)
+            checkout_button.setAttribute("disabled", "");
+        else
+            checkout_button.removeAttribute("disabled", "");
 
         cart_list.innerHTML = "";
         cart.content.forEach((book) => {
