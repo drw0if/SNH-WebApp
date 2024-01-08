@@ -105,6 +105,7 @@
         ]);
 
         if(count($user) === 0){
+            security_log("Correct session {$session['token']} has no valid user {$session['user_id']} associated");
             return false;
         }
 
@@ -262,7 +263,7 @@
         try {
             $sendgrid->send($email);
         } catch (Exception $e) {
-            error_log("Sendgrid error: {$e->getMessage()}");
+            security_log("Couldn't send email, error: {$e->getMessage()}");
             return false;
         }
 
@@ -289,4 +290,8 @@
         return $_COOKIE['csrf_token'] === $csrf_token;
     }
 
+    function security_log($msg){
+        $msg = sprintf("[%s] %s\n", date("Y-m-d H:i:s"), $msg);
+        error_log($msg, 3, "/var/log/nginx/security.log");
+    }
 ?>
