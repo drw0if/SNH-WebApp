@@ -2,6 +2,8 @@
 require_once './lib/utils.php';
 $user = getLoggedUser();
 
+$in_checkout=true;
+
 if ($user == null) {
     raiseNotFound();
 }

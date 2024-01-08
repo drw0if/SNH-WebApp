@@ -7,6 +7,7 @@ un sito fatto, rifatto, strafatto
 
 - [x] orders is messed up
 - [x] remove 0 from cart
-- [ ] remove cart botton inside checkout
+- [x] remove cart botton inside checkout
 - [x] disable button doesn't work on empty cart 
 - [ ] rispondi a ricky
+- [ ] stepper in checkout 
