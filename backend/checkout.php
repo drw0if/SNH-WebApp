@@ -98,7 +98,7 @@ function orderPost($user)
         ]);
     }
 
-    header("Location: /bookshelf.php");
+    header("Location: /orders.php");
     die();
 }
 
