@@ -97,8 +97,14 @@ if (isset($_GET["order_id"])) {
 }
 require_once "template/header.php"; ?>
 
+<div class="container px-3 mx-auto">
+
+
 <?php if (count($ans) === 0) { ?>
-    <p class="text-2xl font-bold text-center">No orders</p>
+    <h1 class="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-5xl ext-white">
+        No orders
+    </h1>
+    <p class="text-2xl font-bold text-center"></p>
 <?php } else if (isset($ans['order_id'])) {
     $order = $ans[0]; ?>
     <div class="grid grid-cols-1 gap-4">
@@ -140,7 +146,11 @@ require_once "template/header.php"; ?>
         </div>
     </div>
 
-<?php } else { ?>
+<?php } else { ?>  
+    <h1 class="mb-10 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-5xl ext-white">
+    Orders
+    </h1>
+
     <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-x-[10rem] gap-y-10">
         <?php foreach ($ans as &$order) { ?>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-x-[10rem] gap-y-10 bg-white border border-gray-200 rounded-lg p-5">
@@ -166,11 +176,12 @@ require_once "template/header.php"; ?>
                     </a>
                 </div>
             </div>
-
         <?php } ?>
     </div>
-    </div>
 <?php } ?>
+
+</div>
+
 
 
 <?php require_once "template/footer.php"; ?>
