@@ -54,12 +54,8 @@ function fetchOrder($user_id, $order_id)
     ];
 }
 
-function orderGet()
+function orderGet($user)
 {
-    require_once './lib/DB.php';
-
-    $user = getLoggedUser();
-
     if (isset($_GET["order_id"])) {
         $order_id = $_GET["order_id"];
         if (!is_numeric($order_id)) {
@@ -75,6 +71,8 @@ function orderGet()
         return $order;
     }
 
+    require_once './lib/DB.php';
+
     // fetch last 10 orders of user
     $db = DB::getInstance();
     $ans = $db->exec('SELECT * FROM `order` WHERE `user_id` = :user_id LIMIT 10', [
@@ -88,11 +86,11 @@ function orderGet()
     return $ans;
 }
 
-$ans = orderGet();
+$ans = orderGet($user);
 
-if (count($ans) === 1) {
-    $description = p($ans[0]['name']);
-    $title = p($ans[0]['name']);
+if (isset($_GET["order_id"])) {
+    $description = "just b00k order n " . p($ans['order_id']);
+    $title = "Order " . p($ans['order_id']);
 } else {
     $description = "just b00k book list";
     $title = "Books";
