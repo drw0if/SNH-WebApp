@@ -6,9 +6,13 @@ if ($user == null) {
     raiseNotFound();
 }
 
-function orderPost()
+function orderPost($user)
 {
-    $user = getLoggedUser();
+    if (!isset($_POST["csrf_token"]) || !check_csrf($_POST["csrf_token"])) {
+        return [
+            "error" => "Invalid CSRF token",
+        ];
+    }
 
     if (!isset($_POST['cart']) || !isset($_POST['credit_card_number']) || !isset($_POST['credit_card_expiration_date']) || !isset($_POST['credit_card_cvv']) || !isset($_POST['shipping_address']) || !isset($_POST['shipping_city']) || !isset($_POST['shipping_state'])) {
         return [
@@ -100,7 +104,7 @@ function orderPost()
 }
 
 if (isPost()) {
-    $ans = orderPost();
+    $ans = orderPost($user);
 }
 
 $description = "just b00k profile page";
@@ -114,6 +118,7 @@ require_once "template/header.php"; ?>
                 Fill the form to checkout
             </h1>
             <form class="space-y-4 md:space-y-6" action="" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo get_csrf_token(); ?>">
                 <div>
                     <label for="credit_card_number" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Credit card number
                     </label>
