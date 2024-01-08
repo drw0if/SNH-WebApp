@@ -5,6 +5,8 @@ const checkout_button = document.getElementById("checkout_button");
 const cart_list = document.getElementById("cart_list");
 const cart_menu = document.getElementById("cart_menu");
 const cart_checkout = document.getElementById("cart_checkout");
+const cart_checkout_total = document.getElementById("cart_checkout_total");
+
 
 const toggle_cart = () => {
     cart_menu.classList.toggle("hidden");
@@ -107,6 +109,8 @@ const cart = {
                 item = make_checkout_item(book, index);
                 cart_checkout.appendChild(item);
             })
+
+            cart_checkout_total.innerText = "Total: $" + total;
         }
 
 
@@ -180,19 +184,26 @@ const make_list_item = (book) => {
 
 const make_checkout_item = (book, index) => {
     const div = document.createElement("div");
+    div.classList.add("flex")
 
     const input_id = document.createElement("input");
     input_id.type = "hidden";
-    input_id.name = `cart[${index}][book_id]`
-    input_id.value = book.id
+    input_id.name = `cart[${index}][book_id]`;
+    input_id.value = book.id;
+
 
     const input_quantity = document.createElement("input");
     input_quantity.type = "hidden";
-    input_quantity.name = `cart[${index}][quantity]`
-    input_quantity.value = book.quantity
+    input_quantity.name = `cart[${index}][quantity]`;
+    input_quantity.value = book.quantity;
 
     div.appendChild(input_id);
     div.appendChild(input_quantity);
+
+    const div_render = document.createElement("div");
+    div_render.classList.add("flex");
+    div_render.innerText = "- " + book.name + "\t" + book.quantity + " x $" + (book.price / 100).toFixed(2);
+    div.appendChild(div_render);
 
     return div;
 }
