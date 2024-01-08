@@ -147,11 +147,7 @@ require_once "template/header.php"; ?>
     </div>
 
 <?php } else { ?>  
-    <h1 class="mb-10 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-5xl ext-white">
-    Orders
-    </h1>
-
-    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-x-[10rem] gap-y-10">
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-x-[10rem] gap-y-10">
         <?php foreach ($ans as &$order) { ?>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-x-[10rem] gap-y-10 bg-white border border-gray-200 rounded-lg p-5">
                 <div class="flex flex-row place-content-between">
