@@ -4,18 +4,14 @@ require_once './lib/utils.php';
 function verifyGet()
 {
     if (!isset($_GET['token'])) {
-        return [
-            "error" => "Invalid token",
-        ];
+        return "Invalid token";
     }
 
     $token = $_GET['token'];
 
     // check types
     if (!is_string($token)) {
-        return [
-            "error" => "Invalid token",
-        ];
+        return "Invalid token";
     }
 
     require_once './lib/DB.php';
@@ -27,9 +23,7 @@ function verifyGet()
     ]);
 
     if (count($ans) === 0) {
-        return [
-            "error" => "Invalid token",
-        ];
+        return "Invalid token";
     }
 
     $user = $ans[0];
@@ -45,15 +39,11 @@ function verifyGet()
         'user_id' => $user_id
     ]);
 
-    return [
-        "msg" => "Account verified correctly",
-    ];
+    header("Location: /login.php");
+    die();
 }
 
-$status = verifyGet();
-
-$error = $status['error'];
-$msg = $status['msg'];
+$error_msg = verifyGet();
 
 $description = "just b00k account verification page";
 $title = "Verify account";
@@ -65,7 +55,7 @@ require_once "template/header.php"; ?>
             <form class="space-y-4 md:space-y-6" action="" method="POST">
 
                 <p class="mt-2 text-sm" id="msg">
-                    <?php echo (isset($msg) ? $msg : $error); ?>
+                    <?php echo $error_msg; ?>
                 </p>
             </form>
         </div>

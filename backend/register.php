@@ -8,19 +8,14 @@ if ($user != null) {
 
 function registerPost()
 {
-    $data = [
-        "email" => $_POST["email"],
-        "username" => $_POST["username"],
-        "password" => $_POST["password"]
-    ];
-
-    if (!isset($data['email']) || !isset($data['username']) || !isset($data['password'])) {
+    if (!isset($_POST['email']) || !isset($_POST['username']) || !isset($_POST['password']) || !isset($_POST['confirm_password'])) {
         return "Invalid data";
     }
 
-    $email = $data['email'];
-    $username = $data['username'];
-    $password = $data['password'];
+    $email =            $_POST["email"];
+    $username =         $_POST["username"];
+    $password =         $_POST["password"];
+    $confirm_password = $_POST["confirm_password"];
 
     // check types
     if (!is_string($email) || !is_string($username) || !is_string($password)) {
@@ -28,7 +23,11 @@ function registerPost()
     }
 
     if (!checkPassword($password)) {
-        return "Password doesn't meet requirements";
+        return "Password doesn't meet requirements: at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 symbol";
+    }
+
+    if ($password !== $confirm_password) {
+        return "Password mismatch";
     }
 
     if (!checkEmail($email)) {
@@ -46,6 +45,7 @@ function registerPost()
     ]);
 
     if (count($ans) !== 0) {
+        security_log("Attempt to register an existing user ({$email})");
         header("Location: /login.php");
         die();
     }
@@ -120,13 +120,10 @@ require_once "template/header.php"; ?>
                 <div>
                     <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Confirm password</label>
                     <input type="password" name="confirm_password" id="confirm_password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" required="" />
-                    <p class="mt-2 text-sm text-red-600 ext-red-500 hidden" id="password_confirm_error_box">
-                        Password mismatch
-                    </p>
                 </div>
 
                 <?php if (isset($error_msg)) { ?>
-                    <p class="mt-2 text-sm text-red-600 ext-red-500 hidden" id="username_error_box">
+                    <p class="mt-2 text-sm text-red-600 ext-red-500" id="username_error_box">
                         <?php echo $error_msg; ?>
                     </p>
                 <?php } ?>
