@@ -138,25 +138,30 @@ require_once "template/header.php"; ?>
                     Fill the form to checkout
                 </h1>
                 <form class="space-y-4 md:space-y-6" action="" method="POST">
-                    <input type="hidden" name="csrf_token" value="<?php echo get_csrf_token(); ?>">
                     <div>
-                        <label for="credit_card_number" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Credit card number
-                        </label>
-                        <input type="text" name="credit_card_number" id="credit_card_number" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="***1234" required="" />
+                        <input type="hidden" name="csrf_token" value="<?php echo get_csrf_token(); ?>">
+                        <div>
+                            <label for="credit_card_number" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Credit card number
+                            </label>
+                            <input type="text" name="credit_card_number" id="credit_card_number" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="***1234" required="" />
+                        </div>
+                        <div>
+                            <label for="credit_card_expiration_date" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Credit card expiration</label>
+                            <input type="text" name="credit_card_expiration_date" id="credit_card_expiration_date" placeholder="12/05" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" required="" />
+                        </div>
+                        <div>
+                            <label for="credit_card_cvv" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Credit card CVV
+                            </label>
+                            <input type="text" name="credit_card_cvv" id="credit_card_cvv" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="123" required="" />
+                        </div>
+                        <div>
+                            <label for="shipping_address" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Shipping address
+                            </label>
+                            <input type="text" name="shipping_address" id="shipping_address" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="Via le mani dal naso" required="" />
+                        </div>
                     </div>
                     <div>
-                        <label for="credit_card_expiration_date" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Credit card expiration</label>
-                        <input type="text" name="credit_card_expiration_date" id="credit_card_expiration_date" placeholder="12/05" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" required="" />
-                    </div>
-                    <div>
-                        <label for="credit_card_cvv" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Credit card CVV
-                        </label>
-                        <input type="text" name="credit_card_cvv" id="credit_card_cvv" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="123" required="" />
-                    </div>
-                    <div>
-                        <label for="shipping_address" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Shipping address
-                        </label>
-                        <input type="text" name="shipping_address" id="shipping_address" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="Via le mani dal naso" required="" />
+                        
                     </div>
                     <div>
                         <label for="shipping_city" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Shipping City

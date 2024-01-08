@@ -64,8 +64,7 @@
                                     <a href="/register.php" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ext-white md:over:text-blue-500 over:bg-gray-700 over:text-blue-500 md:over:bg-transparent order-gray-700">Register</a>
                                 </li>
                             <?php } ?>
-                            <?php if (!isset($in_checkout)) { ?>
-                                <li>
+                                <li class="<?php echo (isset($in_checkout)) ? "hidden" : ""; ?>">
                                     <button class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ext-white md:over:text-blue-500 over:bg-gray-700 over:text-blue-500 md:over:bg-transparent order-gray-700" onclick="toggle_cart()">
                                         <div class="flex justify-center items-center">
                                             <div class="relative">
@@ -81,7 +80,6 @@
                                         </div>
                                     </button>
                                 </li>
-                            <?php }?>
 
                         </ul>
                     </div>
