@@ -25,6 +25,11 @@
         }
     }
 
+    // Push security headers
+    header('X-Frame-Options: DENY');
+    header('X-XSS-Protection: 1; mode=block');
+    header('X-Content-Type-Options: nosniff');    
+
     //This should be created in an offline folder
     define('STORAGE',  '/var/www/html/ebooks/');
     define('OK', 200);
