@@ -47,7 +47,7 @@ function loginPost()
 
     // create session
     $token = bin2hex(random_bytes(32));
-    $db->exec('INSERT INTO `session` (`user_id`, `token`) VALUES (:user_id, :token)', [
+    $db->exec('INSERT INTO `session` (`user_id`, `token`, `valid_until`) VALUES (:user_id, :token, DATE_ADD(NOW(), INTERVAL 30 DAY))', [
         'user_id' => $user['id'],
         'token' => $token
     ]);

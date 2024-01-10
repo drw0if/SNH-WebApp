@@ -33,7 +33,7 @@ CREATE TABLE `session`(
     `id` INT NOT NULL AUTO_INCREMENT,
     `user_id` INT NOT NULL,
     `token` CHAR(64) NOT NULL,
-    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `valid_until` DATETIME NOT NULL,
 
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)

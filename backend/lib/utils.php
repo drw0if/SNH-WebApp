@@ -104,6 +104,18 @@
 
         $session = $ans[0];
 
+        // Check for session expired
+        if (strtotime($session['valid_until']) < time()) {
+            $db->exec('DELETE FROM `session` WHERE `id` = :id', [
+                'id' => $session['id']
+            ]);
+
+            setcookie("session", "", time() - 3600, "/");
+            setcookie("csrf_token", "", time() - 3600, "/");
+            header("Location: /login.php");
+            die();
+        }
+    
         // fetch user data
         $user = $db->exec('SELECT * FROM `user` WHERE `id` = :id', [
             'id' => $session['user_id']
