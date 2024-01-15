@@ -35,6 +35,22 @@ function ask_recover_account()
 
     $user = $ans[0];
 
+    // Cleanup expired requests
+    $db->exec('DELETE FROM `user_recover` WHERE `user_id` = :user_id AND `valid_until` < NOW()', [
+        'user_id' => $user['id']
+    ]);
+
+    // Check if user has a pending request
+    $ans = $db->exec('SELECT * FROM `user_recover` WHERE `user_id` = :user_id', [
+        'user_id' => $user['id']
+    ]);
+
+    if(count($ans) > 0) {
+        return [
+            "msg" => "Check your email for the password recovery link",
+        ];
+    }
+
     // create token
     $token = bin2hex(random_bytes(32));
     $DEPLOYED_DOMAIN = getenv('DEPLOYED_DOMAIN');
@@ -43,7 +59,7 @@ function ask_recover_account()
     $ans = send_mail(
         $email,
         'Recover account',
-        "Click <a href=\"{$DEPLOYED_DOMAIN}/recover_password.php?token={$token}\">here</a> to reset your password!",
+        "Click <a href=\"{$DEPLOYED_DOMAIN}/recover_password.php?token={$token}&user_id={$user['id']}\">here</a> to reset your password!",
         'text/html'
     );
 
@@ -55,8 +71,10 @@ function ask_recover_account()
 
     $ans = $db->exec('INSERT INTO `user_recover` (`user_id`, `token`, `valid_until`) VALUES (:user_id, :token, DATE_ADD(NOW(), INTERVAL 24 HOUR))', [
         'user_id' => $user['id'],
-        'token' => $token
+        'token' => password_hash($token, PASSWORD_DEFAULT),
     ]);
+
+    security_log("User {$user['id']} requested password recovery");
 
     return [
         "msg" => "Check your email for the password recovery link",
@@ -65,7 +83,7 @@ function ask_recover_account()
 
 function recover_account()
 {
-    if (!isset($_POST['token']) || !isset($_POST['password']) || !isset($_POST['confirm_password'])) {
+    if (!isset($_POST['token']) || !isset($_POST['user_id']) || !isset($_POST['password']) || !isset($_POST['confirm_password'])) {
         return [
             "error" => "Invalid token or password"
         ];
@@ -74,9 +92,10 @@ function recover_account()
     $token = $_POST['token'];
     $new_password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
+    $user_id = $_POST['user_id'];
 
     // check types
-    if (!is_string($token) || !is_string($new_password) || !is_string($confirm_password)) {
+    if (!is_string($token) || !is_numeric($user_id) || !is_string($new_password) || !is_string($confirm_password)) {
         return [
             "error" => "Invalid token or password"
         ];
@@ -98,12 +117,12 @@ function recover_account()
 
     // check if token actually exists
     $db = DB::getInstance();
-    $ans = $db->exec('SELECT * FROM `user_recover` WHERE `token` = :token', [
-        'token' => $token
+    $ans = $db->exec('SELECT * FROM `user_recover` WHERE `user_id` = :user_id', [
+        'user_id' => $user_id
     ]);
 
     if (count($ans) === 0) {
-        security_log("Attempt of recovering password with invalid token ({$token})");
+        security_log("Attempt of recovering password for user with no pending requests ({$user_id})");
         return [
             "error" => "Invalid token"
         ];
@@ -111,19 +130,26 @@ function recover_account()
 
     $user_recover = $ans[0];
 
+    if(!password_verify($token, $user_recover['token'])) {
+        security_log("Attempt of recovering password with invalid token ({$user_id})");
+        return [
+            "error" => "Invalid token"
+        ];
+    }
+
     // delete token from requests
     $db->exec('DELETE FROM `user_recover` WHERE `id` = :id', [
         'id' => $user_recover['id']
     ]);
 
     if (strtotime($user_recover['valid_until']) < time()) {
-        security_log("Attempt of recovering password with expired token ({$token})");
+        security_log("Attempt of recovering password with expired token ({$user_id})");
         return [
             "error" => "Token is expired"
         ];
     }
 
-    $ans = $db->exec('SELECT email FROM `user` WHERE `user_id` = :user_id', [
+    $ans = $db->exec('SELECT email FROM `user` WHERE `id` = :user_id', [
         'user_id' => $user_recover['user_id']
     ]);
 
@@ -174,8 +200,8 @@ require_once "template/header.php"; ?>
             </h1>
             <form class="space-y-4 md:space-y-6" action="" method="POST">
                 <?php if (isset($_GET["token"])) { ?>
-                    <label for="text" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Recover code</label>
-                    <input type="text" name="token" id="token" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" placeholder="1234567890" required="" value="<?php echo p($_GET["token"]); ?>" />
+                    <input type="hidden" name="token" id="token"value="<?php echo p($_GET["token"]); ?>" />
+                    <input type="hidden" name="user_id" id="user_id"value="<?php echo p($_GET["user_id"]); ?>" />
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-gray-900 ext-white">Password</label>
                         <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 g-gray-700 order-gray-600 laceholder-gray-400 ext-white ocus:ring-blue-500 ocus:border-blue-500" required="" />
