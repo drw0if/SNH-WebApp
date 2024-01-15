@@ -6,6 +6,7 @@ CREATE TABLE `user`(
     `username` VARCHAR(200) NOT NULL,
     `password` CHAR(64) NOT NULL,
     `verified` BOOLEAN DEFAULT FALSE,
+    `locked` BOOLEAN DEFAULT FALSE,
 
     PRIMARY KEY (`id`)
 ) CHARACTER SET=utf8mb4;
@@ -73,6 +74,24 @@ CREATE TABLE `order_book`(
     PRIMARY KEY (`order_id`, `book_id`),
     FOREIGN KEY (`order_id`) REFERENCES `order`(`id`),
     FOREIGN KEY (`book_id`) REFERENCES `book`(`id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `wrong_login`(
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE `user_lock`(
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `token` CHAR(64) NOT NULL,
+
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
 ) CHARACTER SET=utf8mb4;
 
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;

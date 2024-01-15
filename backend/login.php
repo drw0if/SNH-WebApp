@@ -34,9 +34,60 @@ function loginPost()
         return 'Wrong username or password';
     }
 
+    // check if user is locked
+    if ($ans[0]['locked'] === 1) {
+        security_log("Attempt to log with locked user ({$username})");
+        return 'Wrong username or password';
+    }
+
     $user = $ans[0];
     // check password
     if (!password_verify($password, $user['password'])) {
+        security_log("Attempt to log with wrong password for user ({$username})");
+
+        // Delete old logs
+        $db->exec('DELETE FROM `wrong_login` WHERE `created_at` < DATE_ADD(NOW(), INTERVAL -24 HOUR)');
+
+        // Add new wrong_login event
+        $db->exec('INSERT INTO `wrong_login` (`user_id`) VALUES (:user_id)', [
+            'user_id' => $user['id'],
+        ]);
+
+        // Check if 3 wrong attempts have been done
+        $ans = $db->exec('SELECT COUNT(*) AS amount FROM `wrong_login` WHERE user_id = :user_id AND `created_at` > DATE_ADD(NOW(), INTERVAL -10 MINUTE)', [
+            'user_id' => $user['id'],
+        ]);
+
+        if ($ans[0]['amount'] >= 3) {           
+            // Send email to unlock user
+            $token = bin2hex(random_bytes(32));
+            $DEPLOYED_DOMAIN = getenv('DEPLOYED_DOMAIN');
+        
+            $ans = send_mail(
+                $user['email'],
+                'Unlock your account',
+                "Click <a href=\"{$DEPLOYED_DOMAIN}/unlock.php?token={$token}\">here</a> in order to unlock your account!",
+                'text/html'
+            );
+
+            if (!$ans) {
+                return "Couldn't send unlock email";
+            }
+
+            $db->exec('INSERT INTO `user_lock` (`user_id`, `token`) VALUES (:user_id, :token)', [
+                'user_id' => $user['id'],
+                'token' => $token
+            ]);        
+
+            // lock the user
+            $db->exec('UPDATE `user` SET `locked` = 1 WHERE `id` = :user_id', [
+                'user_id' => $user['id'],
+            ]);
+
+            security_log("User ({$username}) has been locked");
+            return 'Wrong username or password';
+        }
+
         return 'Wrong username or password';
     }
 

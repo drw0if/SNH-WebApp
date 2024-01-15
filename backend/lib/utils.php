@@ -270,6 +270,7 @@
     function set_csrf_token(){
         $csrf_token = bin2hex(random_bytes(32));
         setcookie("csrf_token", $csrf_token, time() + 30 * 24 * 60 * 60, "/", "", true, true);
+        $_COOKIE['csrf_token'] = $csrf_token;
         return $csrf_token;
     }
 
